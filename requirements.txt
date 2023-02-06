@@ -1,2 +1,3 @@
+Transformers>=4.00
 ray[rllib, serve, tune]
 redis==3.3.8
