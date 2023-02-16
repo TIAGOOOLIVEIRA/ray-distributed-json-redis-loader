@@ -7,6 +7,7 @@ import json
 
 import ray
 
+import os
 
 @ray.remote
 def get_host_name(x):
@@ -15,6 +16,10 @@ def get_host_name(x):
 
     time.sleep(0.01)
     return x + (platform.node(),)
+
+@ray.remote
+def send_to_redis(record):
+    #todo
 
 
 def wait_for_nodes(expected):
@@ -34,7 +39,18 @@ def wait_for_nodes(expected):
 
 
 def main():
+    #https://realpython.com/python-redis/
     wait_for_nodes(4)
+
+    r = redis.Redis(host=os.environ["REDIS_ENDPOINT"])
+
+    #loading from file
+    #making database available for actros
+    f = open('../subtree/subtrees1.json')
+    data = json.load(f)  # OCID->[OCID]
+    f.close()
+
+    database_object_ref = ray.put(data)
 
     # Check that objects can be transferred from each node to each other node.
     for i in range(10):
