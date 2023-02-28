@@ -26,6 +26,11 @@ def get_host_name(x):
     return x + (platform.node(),)
 
 @ray.remote
+def f(x):
+    time.sleep(1)
+    return x
+
+@ray.remote
 def send_to_redis(record):
     print("sending")
     #https://pypi.org/project/redisearch/
@@ -56,6 +61,15 @@ def print_runtime(input_data, start_time, decimals=1):
     print(*input_data, sep='\n')
 
 def main():
+
+    # Start 4 tasks in parallel.
+    result_ids = []
+    for i in range(4):
+        result_ids.append(f.remote(i))
+
+    # Wait for the tasks to complete and retrieve the results.
+    # With at least 4 cores, this will take 1 second.
+    results = ray.get(result_ids)  # [0, 1, 2, 3]
 
     #https://realpython.com/python-redis/
     #wait_for_nodes(4)
