@@ -1,5 +1,6 @@
 import sys
 import time
+import logging
 from collections import Counter
 
 #from redisearch import Client
@@ -8,12 +9,10 @@ import json
 import ray
 import os
 
-ray.init()
-
-f = open(
+file = open(
     '/Users/tiagoooliveira/Documents/dev/scala/akka-http-quickstart-scala/src/main/resources/patent-13062022-1.json')
-data = json.load(f)
-f.close()
+data = json.load(file)
+file.close()
 
 database_object_ref = ray.put(data)
 
@@ -61,7 +60,7 @@ def print_runtime(input_data, start_time, decimals=1):
     print(*input_data, sep='\n')
 
 def main():
-
+    print("initialized go")
     # Start 4 tasks in parallel.
     result_ids = []
     for i in range(4):
@@ -82,23 +81,26 @@ def main():
     #iterate over remote method/actor (responsible to send json to Redis) at the limit of actors available
 
 
+
+
+
+if __name__ == "__main__":
+    if ray.is_initialized:
+        ray.shutdown()
+    ray.init(logging_level=logging.ERROR)
+
     start = time.time()
-    #data_references = [retrieve_task.remote(item) for item in range(8)]
+    # data_references = [retrieve_task.remote(item) for item in range(8)]
     data_references = retrieve_task.remote("CN112310387B")
     all_data = []
-
 
     finished, data_references = ray.wait(data_references)
     data = ray.get(finished)
 
     print_runtime(data, start, 3)
 
-    #all_data.extend(data)
+    # all_data.extend(data)
 
     print("Success!")
     sys.stdout.flush()
     time.sleep(20)
-
-
-if __name__ == "__main__":
-    main()
