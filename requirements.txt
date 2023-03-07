@@ -1,3 +1,6 @@
 Transformers>=4.00
 ray[rllib, serve, tune]
-redis
+fastapi >= 0.51
+fastapi-jwt-auth >= 0.5.0
+fastapi-versioning >= 0.8
+redisearch
