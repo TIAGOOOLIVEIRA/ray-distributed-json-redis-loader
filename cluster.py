@@ -3,11 +3,6 @@ import time
 import logging
 from collections import Counter
 
-from fastapi import FastAPI, File, UploadFile, Request
-import uvicorn
-import shutil
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
 from redisearch import Client
 import redisearch
@@ -15,17 +10,6 @@ import json
 import ray
 import os
 
-app = FastAPI()
-templates = Jinja2Templates(directory="templates")
-@app.get("/upload/", response_class=HTMLResponse)
-async def upload(request: Request):
-   return templates.    TemplateResponse("uploadfile.html", {"request": request})
-
-@app.post("/uploader/")
-async def create_upload_file(file: UploadFile = File(...)):
-   with open("destination.png", "wb") as buffer:
-      shutil.copyfileobj(file.file, buffer)
-   return {"filename": file.filename}
 
 @ray.remote
 class RecordTracker:
@@ -37,6 +21,17 @@ class RecordTracker:
 
     def counts(self):
         return self.total
+
+@ray.remote
+class RecordLoader:
+    def __int__(self):
+        print("file")
+    def loadFile(file):
+        print(file)
+    def loadRecord(record):
+        print(record)
+
+
 
 file = open(
     '/Users/tiagoooliveira/Documents/dev/scala/akka-http-quickstart-scala/src/main/resources/patent-13062022-1.json')
