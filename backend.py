@@ -4,6 +4,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from typing import Optional
 
+import ulid
+
 import ray
 
 app = FastAPI()
@@ -22,6 +24,10 @@ async def upload(request: Request):
 async def create_upload_file(file: UploadFile = File(...)):
    with open("destination.png", "wb") as buffer:
       shutil.copyfileobj(file.file, buffer)
+      print(ulid.ulid())
+      #generates ulid to rename file
+      #sends a message to the Ray cluster: path/ulid
+       #https://medium.com/distributed-computing-with-ray/how-to-scale-up-your-fastapi-application-using-ray-serve-c9a7b69e786
    return {"filename": file.filename}
 
 @app.post("/search/")
